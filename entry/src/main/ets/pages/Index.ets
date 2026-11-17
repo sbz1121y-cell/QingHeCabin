@@ -4,6 +4,7 @@ import { CabinStore } from '../storage/CabinStore';
 import { CabinState, Device, EventLog, Rule, Sample, SensorKey, sensorName, sensorUnit, deviceName } from '../model/Models';
 import { CabinEngine } from '../engine/CabinEngine';
 import { MetricTile } from '../components/MetricTile';
+import { SensorControl } from '../components/SensorControl';
 
 @Entry
 @Component
@@ -14,6 +15,9 @@ struct Index {
   @State selectedTab: number = 0;
   @State logFilter: string = '全部';
   @State saving: boolean = false;
+  @State temperature: number = 28;
+  @State humidity: number = 55;
+  @State light: number = 480;
 
   aboutToAppear(): void { this.load(); }
   onPageShow(): void { if (CabinStore.ready) { this.refresh(); } }
@@ -23,6 +27,9 @@ struct Index {
   }
   refresh(): void {
     this.data = JSON.parse(JSON.stringify(CabinStore.engine.state)) as CabinState;
+    this.temperature = this.data.environment.temperature;
+    this.humidity = this.data.environment.humidity;
+    this.light = this.data.environment.light;
     this.status = CabinStore.status;
   }
   now(): string { return new Date().toLocaleTimeString(); }
@@ -122,15 +129,18 @@ struct Index {
         }.width('100%').padding(20).backgroundColor('#174A3A').borderRadius(22)
         this.title('环境概览', '第 ' + this.data.tick + ' 次采样')
         Row({ space: 8 }) {
-          MetricTile({ label: '空气温度', value: this.data.environment.temperature.toFixed(1), unit: '°C', note: '参考 20～30 °C' })
-          MetricTile({ label: '空气湿度', value: this.data.environment.humidity.toFixed(0), unit: '%', note: '参考 40～70 %' })
-          MetricTile({ label: '环境光照', value: this.data.environment.light.toFixed(0), unit: 'lx', note: '参考 300～800 lx' })
+          MetricTile({ label: '空气温度', value: this.temperature.toFixed(1), unit: '°C', note: '参考 20～30 °C' })
+          MetricTile({ label: '空气湿度', value: this.humidity.toFixed(0), unit: '%', note: '参考 40～70 %' })
+          MetricTile({ label: '环境光照', value: this.light.toFixed(0), unit: 'lx', note: '参考 300～800 lx' })
         }.width('100%')
         this.title('环境实验台', '拖动数值观察联动')
         Column({ space: 10 }) {
-          this.slider('温度', 'temperature', this.data.environment.temperature, -10, 60)
-          this.slider('湿度', 'humidity', this.data.environment.humidity, 0, 100)
-          this.slider('光照', 'light', this.data.environment.light, 0, 2000)
+          SensorControl({ label: '温度', value: this.temperature, unit: '°C', minimum: -10, maximum: 60,
+            onValue: (v: number, m: SliderChangeMode) => { this.update('temperature', v, m); } })
+          SensorControl({ label: '湿度', value: this.humidity, unit: '%', minimum: 0, maximum: 100,
+            onValue: (v: number, m: SliderChangeMode) => { this.update('humidity', v, m); } })
+          SensorControl({ label: '光照', value: this.light, unit: 'lx', minimum: 0, maximum: 2000, stepSize: 10, decimals: 0,
+            onValue: (v: number, m: SliderChangeMode) => { this.update('light', v, m); } })
           Row({ space: 6 }) {
             ForEach(['高温干燥', '夜间弱光', '舒适环境'], (s: string) => {
               Button(s).fontSize(11).height(34).layoutWeight(1).fontColor('#315640').backgroundColor('#EDF2E6')

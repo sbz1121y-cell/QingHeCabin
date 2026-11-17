@@ -1,0 +1,125 @@
+{
+  "device": "Huawei_Phone / 127.0.0.1:5555",
+  "system": "HarmonyOS emulator 5.0.1.121(SP1DEVC00E120R4P11log), API17",
+  "executedAt": "2026-11-17T12:39:32+0800",
+  "passed": 14,
+  "total": 14,
+  "results": [
+    {
+      "name": "场景与单步仿真",
+      "passed": true,
+      "actual": {
+        "temperature": 32.4,
+        "humidity": 37,
+        "light": 590
+      }
+    },
+    {
+      "name": "新增优先关闭规则",
+      "passed": true,
+      "actual": {
+        "id": "r16",
+        "name": "PriorityGuard",
+        "sensor": "temperature",
+        "compare": "above",
+        "threshold": 30,
+        "device": "fan",
+        "action": false,
+        "priority": 99,
+        "enabled": true
+      }
+    },
+    {
+      "name": "规则冲突实际执行",
+      "passed": true,
+      "actual": {
+        "id": "fan",
+        "name": "通风扇",
+        "on": false,
+        "online": true,
+        "manual": false,
+        "reason": "规则：PriorityGuard"
+      }
+    },
+    {
+      "name": "手动接管与交还",
+      "passed": true,
+      "actual": [
+        "通风扇关闭 · 规则：PriorityGuard",
+        "保存规则：PriorityGuard",
+        "通风扇开启 · 规则：高温通风",
+        "通风扇恢复在线",
+        "通风扇模拟离线",
+        "通风扇开启 · 规则：高温通风",
+        "通风扇交还自动控制",
+        "通风扇关闭",
+        "载入高温干燥",
+        "灌溉泵开启 · 规则：低湿灌溉"
+      ]
+    },
+    {
+      "name": "离线与在线恢复",
+      "passed": true,
+      "actual": "已记录离线和恢复在线事件"
+    },
+    {
+      "name": "重启恢复 environment",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "重启恢复 devices",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "重启恢复 rules",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "重启恢复 logs",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "重启恢复 samples",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "重启恢复 tick",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "重启恢复 automation",
+      "passed": true,
+      "actual": {
+        "equal": true
+      }
+    },
+    {
+      "name": "恢复后页面数值",
+      "passed": true,
+      "actual": "32.4 °C、37 %、590 lx"
+    },
+    {
+      "name": "恢复后自定义规则可见",
+      "passed": true,
+      "actual": "PriorityGuard规则卡片"
+    }
+  ]
+}

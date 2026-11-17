@@ -1,0 +1,206 @@
+{
+  "executedAt": "2026-11-17T04:18:43.875Z",
+  "runtime": "v18.20.1",
+  "scope": "实际ArkTS纯业务源码经TypeScript转译后在Node运行；不是设备实测",
+  "sourceHashes": {
+    "model/Models.ets": "3c2f7446950c4fc3dfbd23f0751a8f93fed7fbe984dbffe3200bbea6a967bab9",
+    "engine/CabinEngine.ets": "e37832a71544062fa99bd01b9580e0004e4d10e5a16e31eea23d05819161dfd4",
+    "storage/StateCodec.ets": "1d172a41c3ffe3e840aac200300a4ae1dbeba622dc81cc4dd8ed46f5ace322a7"
+  },
+  "passed": 24,
+  "total": 24,
+  "records": [
+    {
+      "category": "正常",
+      "name": "高温触发通风",
+      "input": "temperature=36",
+      "expected": "风扇开启",
+      "actual": "风扇开启",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "严格大于阈值",
+      "input": "temperature=30, threshold=30",
+      "expected": "风扇关闭",
+      "actual": "风扇关闭",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "严格小于阈值",
+      "input": "humidity=40, threshold=40",
+      "expected": "灌溉泵关闭",
+      "actual": "灌溉泵关闭",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "冲突规则优先级",
+      "input": "36°C；priority=99 关闭 fan",
+      "expected": "关闭规则获胜",
+      "actual": "关闭规则获胜",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "同优先级稳定排序",
+      "input": "aaa关闭, hot开启, priority均10",
+      "expected": "aaa规则获胜",
+      "actual": "aaa规则获胜",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "手动接管及交还",
+      "input": "自动开启→手动关闭→再计算→交还",
+      "expected": "接管期间保持关闭，交还后开启",
+      "actual": "接管期间保持关闭，交还后开启",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "离线控制拦截",
+      "input": "fan离线→手动开启",
+      "expected": "返回错误且设备关闭",
+      "actual": "返回错误且设备关闭",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "在线恢复重新联动",
+      "input": "36°C；离线→在线",
+      "expected": "风扇重新开启",
+      "actual": "风扇重新开启",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "暂停自动联动",
+      "input": "关闭自动→temperature=36",
+      "expected": "状态保留，开启自动后联动",
+      "actual": "状态保留，开启自动后联动",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "无命中安全关闭",
+      "input": "temperature=36→26",
+      "expected": "风扇先开后关",
+      "actual": "风扇先开后关",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "规则开关重新计算",
+      "input": "36°C→停用hot",
+      "expected": "风扇关闭",
+      "actual": "风扇关闭",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "删除规则重新计算",
+      "input": "36°C→删除hot",
+      "expected": "风扇关闭且规则被移除",
+      "actual": "风扇关闭且规则被移除",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "无效阈值不修改状态",
+      "input": "threshold=NaN",
+      "expected": "拒绝并保留原规则",
+      "actual": "拒绝并保留原规则",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "空名及越界优先级",
+      "input": "name为空；priority=100",
+      "expected": "均被拒绝",
+      "actual": "均被拒绝",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "环境越界输入",
+      "input": "temperature=61, humidity=-1, light=Infinity",
+      "expected": "拒绝且环境未变",
+      "actual": "拒绝且环境未变",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "规则数量上限及编辑",
+      "input": "20条规则后新增/编辑",
+      "expected": "新增拒绝，已有规则可编辑",
+      "actual": "新增拒绝，已有规则可编辑",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "传感器合法极值",
+      "input": "temperature=-10/60; humidity=0/100; light=0/2000",
+      "expected": "全部接受",
+      "actual": "全部接受",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "日志去重及容量",
+      "input": "重复计算；连续120次操作",
+      "expected": "重复联动不增日志，最多100条",
+      "actual": "重复联动不增日志，最多100条",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "仿真反馈与采样",
+      "input": "36°C，风扇开启后推进",
+      "expected": "温度34.8°C且采样tick=1",
+      "actual": "温度34.8°C且采样tick=1",
+      "status": "PASS"
+    },
+    {
+      "category": "边界",
+      "name": "仿真上下限与采样容量",
+      "input": "极值输入后推进50次",
+      "expected": "数据不越界且仅保留12次采样",
+      "actual": "数据不越界且仅保留12次采样",
+      "status": "PASS"
+    },
+    {
+      "category": "正常",
+      "name": "快照编码恢复",
+      "input": "含规则、设备、环境、日志与采样的存档",
+      "expected": "JSON往返一致",
+      "actual": "JSON往返一致（未验证系统Preferences落盘）",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "损坏存档回退",
+      "input": "{bad json / null / 缺字段",
+      "expected": "恢复初始配置并反馈损坏",
+      "actual": "恢复初始配置并反馈损坏",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "存档版本与数值校验",
+      "input": "schemaVersion=2；temperature=null",
+      "expected": "拒绝非法存档",
+      "actual": "拒绝非法存档",
+      "status": "PASS"
+    },
+    {
+      "category": "异常",
+      "name": "重复规则ID与设备ID",
+      "input": "重复hot；重复fan",
+      "expected": "拒绝非法存档",
+      "actual": "拒绝非法存档",
+      "status": "PASS"
+    }
+  ]
+}

@@ -65,18 +65,6 @@ struct Index {
     }.width('100%').margin({ top: 22, bottom: 12 })
   }
   @Builder
-  slider(label: string, key: SensorKey, value: number, min: number, max: number) {
-    Column({ space: 3 }) {
-      Row() {
-        Text(label).fontSize(13).fontColor('#41574A').layoutWeight(1)
-        Text(value.toFixed(key === 'light' ? 0 : 1) + ' ' + sensorUnit(key)).fontSize(13).fontColor('#174A3A')
-      }.width('100%')
-      Slider({ value: value, min: min, max: max, step: key === 'light' ? 10 : 1 })
-        .selectedColor('#267553').trackColor('#DFE7DC').blockColor('#174A3A')
-        .onChange((v: number, mode: SliderChangeMode) => { this.update(key, v, mode); })
-    }.width('100%')
-  }
-  @Builder
   deviceCard(d: Device) {
     Column({ space: 10 }) {
       Row({ space: 10 }) {
